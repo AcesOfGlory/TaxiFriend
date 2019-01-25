@@ -17,7 +17,7 @@
     <string name="Card">Card</string>
     <string name="Card_Number">Card number</string>
     <string name="End_Date">End date</string>
-    <string name="CW">CW</string>
+    <string name="CVV">CVV</string>
     <string name="Book">Book</string>
     <string name="Total_Payment">Total payment</string>
     <string name="Done">Done</string>
