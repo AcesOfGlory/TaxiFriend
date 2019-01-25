@@ -1,15 +1,24 @@
 <resources>
     <string name="app_name">TaxiFriend</string>
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="title_activity_maps">Map</string>
+    <string name="Email">Email</string>
+    <string name="Password">Password</string>
+    <string name="Re_Enter_Password">Re-Enter Password</string>
+    <string name="Strength">Strength</string>
+    <string name="Log_In">Log in</string>
+    <string name="Make_an_Account">Make an Account</string>
+    <string name="Register">Register</string>
+    <string name="From_Location">From</string>
+    <string name="To_Location">To</string>
+    <string name="Booking_Time">Booking time</string>
+    <string name="Priority">Priority</string>
+    <string name="Promotion">Promotion</string>
+    <string name="Cash">Cash</string>
+    <string name="Card">Card</string>
+    <string name="Card_Number">Card number</string>
+    <string name="End_Date">End date</string>
+    <string name="CW">CW</string>
+    <string name="Book">Book</string>
+    <string name="Total_Payment">Total payment</string>
+    <string name="Done">Done</string>
 </resources>
