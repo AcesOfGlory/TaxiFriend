@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">TaxiFriend</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="Email">Email</string>
+    <string name="Password">Password</string>
+    <string name="Re_Enter_Password">Re-Enter Password</string>
+    <string name="Strength">Strength</string>
+    <string name="Log_In">Log in</string>
+    <string name="Make_an_Account">Make an Account</string>
+    <string name="Register">Register</string>
+    <string name="From_Location">From</string>
+    <string name="To_Location">To</string>
+    <string name="Booking_Time">Booking time</string>
+    <string name="Priority">Priority</string>
+    <string name="Promotion">Promotion</string>
+    <string name="Cash">Cash</string>
+    <string name="Card">Card</string>
+    <string name="Card_Number">Card number</string>
+    <string name="End_Date">End date</string>
+    <string name="CW">CW</string>
+    <string name="Book">Book</string>
+    <string name="Total_Payment">Total payment</string>
+    <string name="Done">Done</string>
+</resources>
