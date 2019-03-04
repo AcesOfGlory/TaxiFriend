@@ -8,8 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class PaymentActivity extends AppCompatActivity {
+
+    String strContent,strContent2;
+    EditText content,content2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +28,14 @@ public class PaymentActivity extends AppCompatActivity {
                 startActivity(new Intent(PaymentActivity.this, OverviewActivity.class));
             }
         });
+        content = findViewById(R.id.fromPayment);
+        content2 = findViewById(R.id.toPayment);
+        Intent intent = getIntent();
+        strContent = intent.getStringExtra("fromLocation");
+        strContent2 = intent.getStringExtra("toLocation");
+        content.setText(strContent);
+        content2.setText(strContent2);
+
 
     }
 }
