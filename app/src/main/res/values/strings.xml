@@ -24,5 +24,6 @@
     <string name="Book">Book</string>
     <string name="Total_Payment">Total payment</string>
     <string name="Done">Done</string>
+    <string name="Ok">Ok</string>
 
 </resources>
