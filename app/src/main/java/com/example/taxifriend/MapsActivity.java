@@ -170,9 +170,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return coord;
     }
 
-    public void drawPolyline(MarkerOptions fromPlace, MarkerOptions toPlace){
-    }
-
     private String getUrl(LatLng origin, LatLng dest, String directionMode) {
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
