@@ -1,5 +1,9 @@
 package com.example.taxifriend;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -9,6 +13,8 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,7 +37,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     MarkerOptions mOptions;
     Marker fromMarker = null,toMarker = null;
-    PolylineOptions polyOptions;
+    PopupWindow popupWindow;
+    Context context;
+    private RelativeLayout mRelativeLayout;
+    private Button mButton;
+
+    private PopupWindow mPopupWindow;
+    Activity activity;
     private Polyline currentPolyline;
     LatLng coord = null;
     List<Address> addressList;
@@ -59,11 +71,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 strContent = content.getText().toString();
                 content2 = findViewById(R.id.toLocation);
                 strContent2 = content2.getText().toString();
-                Intent intent = new Intent(MapsActivity.this,PaymentActivity.class);
-                intent.putExtra("fromLocation",strContent);
-                intent.putExtra("toLocation",strContent2);
-                startActivity(intent);
+                if(strContent.equals("") || strContent2.equals("")){
+                    new AlertDialog.Builder(MapsActivity.this).setTitle("Validation!")
+                            .setMessage("You need to enter two locations")
+                            .setNegativeButton("Okay", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .show();
+                }else{
+                    Intent intent = new Intent(MapsActivity.this,PaymentActivity.class);
+                    intent.putExtra("fromLocation",strContent);
+                    intent.putExtra("toLocation",strContent2);
+                    startActivity(intent);
+
+
+                }
             }
+
         });
 
         Button btn1 = (Button) findViewById(R.id.buttonFromOk);
