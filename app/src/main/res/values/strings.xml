@@ -25,5 +25,6 @@
     <string name="Total_Payment">Total payment</string>
     <string name="Done">Done</string>
     <string name="Ok">Ok</string>
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
 
 </resources>
