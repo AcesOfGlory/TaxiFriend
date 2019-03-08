@@ -9,8 +9,8 @@ import android.widget.EditText;
 
 public class OverviewActivity extends AppCompatActivity {
 
-    String strContent,strContent2,strContent3,strContent4,strContent5;
-    EditText content,content2,content3,content4,content5;
+    String strContent,strContent2,strContent3,strContent4,strContent5,strContent6;
+    EditText content,content2,content3,content4,content5,content6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +28,7 @@ public class OverviewActivity extends AppCompatActivity {
         content = findViewById(R.id.fromOverview);
         content2 = findViewById(R.id.toOverview);
         content3 = findViewById(R.id.bookingTimeOverview);
+        content6 = findViewById(R.id.bookingDateOverview);
         content4 = findViewById(R.id.priorityOverview);
         content5 = findViewById(R.id.promotionOverview);
         Intent intent = getIntent();
@@ -36,11 +37,13 @@ public class OverviewActivity extends AppCompatActivity {
         strContent3 = intent.getStringExtra("bookingTimePayment");
         strContent4 = intent.getStringExtra("priorityPayment");
         strContent5 = intent.getStringExtra("promotionPayment");
+        strContent6 = intent.getStringExtra("bookingDatePayment");
         content.setText(strContent);
         content2.setText(strContent2);
         content3.setText(strContent3);
         content4.setText(strContent4);
         content5.setText(strContent5);
+        content6.setText(strContent6);
 
     }
 }
