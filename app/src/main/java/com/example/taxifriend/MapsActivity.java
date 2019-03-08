@@ -5,16 +5,20 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,7 +56,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -93,6 +96,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         });
 
+        content = findViewById(R.id.fromLocation);
+        content.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_SEARCH ||
+                        i == EditorInfo.IME_ACTION_DONE ||
+                        keyEvent != null &&
+                                keyEvent.getAction() == KeyEvent.ACTION_DOWN &&
+                                keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    if (keyEvent == null || !keyEvent.isShiftPressed()) {
+                        content = findViewById(R.id.fromLocation);
+                        strContent = content.getText().toString();
+                        coord = getLocation(strContent);
+                        LatLng fromLocationMarker = coord;
+                        if (fromMarker == null) {
+                            fromMarker = mMap.addMarker(new MarkerOptions().position(fromLocationMarker).title("From Location"));
+                        }else{
+                            fromMarker.setPosition(fromLocationMarker);
+                        }
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(fromLocationMarker));
+                        //CameraUpdateFactory.zoomTo(15);
+
+                        return true; // consume.
+                    }
+                }
+                return false;
+            }
+        });
+
         Button btn1 = (Button) findViewById(R.id.buttonFromOk);
 
         btn1.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +140,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     fromMarker.setPosition(fromLocationMarker);
                 }
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(fromLocationMarker));
+                CameraUpdateFactory.zoomTo(15);
 
             }
         });
@@ -128,6 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     toMarker.setPosition(toLocationMarker);
                 }
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(toLocationMarker));
+                CameraUpdateFactory.zoomTo(15);
 
                 new FetchURL(MapsActivity.this).execute(getUrl(fromMarker.getPosition(), toMarker.getPosition(), "driving"), "driving");
             }
@@ -154,6 +188,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //LatLng curr = new LatLng();
         String address = "London";
         String address2 = "Manchester";
+
+        googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(53.5127483,-2.2114427), 5.0f) );
+
 
         /**
         try {
