@@ -1,5 +1,6 @@
 package com.example.taxifriend;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class PaymentActivity extends AppCompatActivity {
@@ -53,11 +56,30 @@ public class PaymentActivity extends AppCompatActivity {
         dropdown.setAdapter(adapter);
 
         Date d=new Date();
-        SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
+        SimpleDateFormat sdf=new SimpleDateFormat("hh:mm");
         String currentDateTimeString = sdf.format(d);
         content = findViewById(R.id.fromPayment);
         content2 = findViewById(R.id.toPayment);
         content3 = findViewById(R.id.bookingTimePayment);
+        content3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar currTime = Calendar.getInstance();
+                int hour = currTime.get(Calendar.HOUR_OF_DAY);
+                int minute = currTime.get(Calendar.MINUTE);
+                TimePickerDialog timePicker;
+                timePicker = new TimePickerDialog(PaymentActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfHour) {
+                        content3.setText( hourOfDay + ":" + minuteOfHour);
+                    }
+                },hour,minute,true);
+                timePicker.setTitle("Select Time");
+                timePicker.show();
+
+            }
+        });
+
         Intent intent = getIntent();
         strContent = intent.getStringExtra("fromLocation");
         strContent2 = intent.getStringExtra("toLocation");
