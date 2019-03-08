@@ -7,7 +7,7 @@
     tools:context=".PaymentActivity">
 
     <EditText
-        android:id="@+id/editText11"
+        android:id="@+id/CWPayment"
         android:layout_width="74dp"
         android:layout_height="45dp"
         android:layout_marginStart="8dp"
@@ -87,7 +87,7 @@
         app:layout_constraintVertical_bias="0.327" />
 
     <EditText
-        android:id="@+id/editText10"
+        android:id="@+id/cardNumberPayment"
         android:layout_width="226dp"
         android:layout_height="45dp"
         android:layout_marginStart="8dp"
@@ -206,7 +206,7 @@
         app:layout_constraintVertical_bias="0.329" />
 
     <TextView
-        android:id="@+id/textView12"
+        android:id="@+id/CWTextField"
         android:layout_width="44dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
@@ -225,7 +225,7 @@
         app:layout_constraintVertical_bias="0.88" />
 
     <TextView
-        android:id="@+id/textView17"
+        android:id="@+id/cardNumberTextField"
         android:layout_width="104dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
@@ -244,7 +244,7 @@
         app:layout_constraintVertical_bias="0.774" />
 
     <TextView
-        android:id="@+id/textView15"
+        android:id="@+id/endDateTextField"
         android:layout_width="44dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
@@ -320,17 +320,18 @@
         <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/cardTab"
             android:text="@string/Card" />
 
         <android.support.design.widget.TabItem
-            android:id="@+id/tabItem"
+            android:id="@+id/cashTab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Cash" />
     </android.support.design.widget.TabLayout>
 
     <EditText
-        android:id="@+id/editText14"
+        android:id="@+id/endDatePayment"
         android:layout_width="118dp"
         android:layout_height="44dp"
         android:layout_marginStart="8dp"

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.text.SimpleDateFormat;
@@ -21,6 +23,7 @@ public class PaymentActivity extends AppCompatActivity {
 
     String strContent,strContent2,strContent3,strContent4,strContent5,strContent6;
     EditText content,content2,content3,content4,content5;
+    TextView textContent,textContent2,textContent3,textContent4;
     Spinner spinnerContent;
 
     @Override
@@ -107,6 +110,45 @@ public class PaymentActivity extends AppCompatActivity {
                 datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
                 datePicker.setTitle("Select date");
                 datePicker.show();
+            }
+        });
+
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                textContent = findViewById(R.id.cardNumberTextField);
+                content = findViewById(R.id.cardNumberPayment);
+                textContent2 = findViewById(R.id.endDateTextField);
+                content2 = findViewById(R.id.endDatePayment);
+                textContent3 = findViewById(R.id.CWTextField);
+                content3 = findViewById(R.id.CWPayment);
+                int position = tab.getPosition();
+                if(position == 1){
+                    textContent.setVisibility(View.INVISIBLE);
+                    content.setVisibility(View.INVISIBLE);
+                    textContent2.setVisibility(View.INVISIBLE);
+                    content2.setVisibility(View.INVISIBLE);
+                    textContent3.setVisibility(View.INVISIBLE);
+                    content3.setVisibility(View.INVISIBLE);
+                }else {
+                    textContent.setVisibility(View.VISIBLE);
+                    content.setVisibility(View.VISIBLE);
+                    textContent2.setVisibility(View.VISIBLE);
+                    content2.setVisibility(View.VISIBLE);
+                    textContent3.setVisibility(View.VISIBLE);
+                    content3.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
 
