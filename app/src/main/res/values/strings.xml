@@ -4,7 +4,7 @@
     <string name="title_activity_overview">OverviewActivity</string>
     <string name="title_activity_payment">PaymentActivity</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_register">LoginActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
 
     <string name="Email">Email</string>
