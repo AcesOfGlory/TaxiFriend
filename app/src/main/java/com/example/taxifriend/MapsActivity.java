@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -14,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
@@ -96,7 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         });
 
-        content = findViewById(R.id.fromLocation);
+        content = findViewById(R.id.toLocation);
         content.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -118,52 +118,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(fromLocationMarker));
                         //CameraUpdateFactory.zoomTo(15);
 
+                        content = findViewById(R.id.toLocation);
+                        content2 = findViewById(R.id.fromLocation);
+                        strContent = content.getText().toString();
+                        coord = getLocation(strContent);
+                        LatLng toLocationMarker = coord;
+                        if(toMarker == null) {
+                            toMarker = mMap.addMarker(new MarkerOptions().position(toLocationMarker).title("To Location"));
+                        }else{
+                            toMarker.setPosition(toLocationMarker);
+                        }
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(toLocationMarker));
+                        CameraUpdateFactory.zoomTo(15);
+
+                        new FetchURL(MapsActivity.this).execute(getUrl(fromMarker.getPosition(), toMarker.getPosition(), "driving"), "driving");
+
+                        InputMethodManager inputManager = (InputMethodManager) textView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputManager.hideSoftInputFromWindow(textView.getWindowToken(),0);
                         return true; // consume.
                     }
                 }
                 return false;
-            }
-        });
-
-        Button btn1 = (Button) findViewById(R.id.buttonFromOk);
-
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                content = findViewById(R.id.fromLocation);
-                strContent = content.getText().toString();
-                coord = getLocation(strContent);
-                LatLng fromLocationMarker = coord;
-                if (fromMarker == null) {
-                    fromMarker = mMap.addMarker(new MarkerOptions().position(fromLocationMarker).title("From Location"));
-                }else{
-                    fromMarker.setPosition(fromLocationMarker);
-                }
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(fromLocationMarker));
-                CameraUpdateFactory.zoomTo(15);
-
-            }
-        });
-
-        Button btn2 = (Button) findViewById(R.id.buttonToOk);
-
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                content = findViewById(R.id.toLocation);
-                content2 = findViewById(R.id.fromLocation);
-                strContent = content.getText().toString();
-                coord = getLocation(strContent);
-                LatLng toLocationMarker = coord;
-                if(toMarker == null) {
-                    toMarker = mMap.addMarker(new MarkerOptions().position(toLocationMarker).title("To Location"));
-                }else{
-                    toMarker.setPosition(toLocationMarker);
-                }
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(toLocationMarker));
-                CameraUpdateFactory.zoomTo(15);
-
-                new FetchURL(MapsActivity.this).execute(getUrl(fromMarker.getPosition(), toMarker.getPosition(), "driving"), "driving");
             }
         });
 
