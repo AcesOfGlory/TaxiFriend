@@ -1,5 +1,7 @@
 package com.example.taxifriend;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -36,7 +38,27 @@ public class LoginActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, MapsActivity.class));
+                EditText content,content2;
+                content = findViewById(R.id.emailLogin);
+                content2 = findViewById(R.id.passwordLogin);
+
+                String username = content.getText().toString();
+                String password = content2.getText().toString();
+                String type = "login";
+                BackgroundWork backgroundWorker = new BackgroundWork(LoginActivity.this);
+                if(backgroundWorker.execute(type, username, password).equals("0")){
+                    new AlertDialog.Builder(LoginActivity.this).setTitle("Validation!")
+                            .setMessage("Your details are incorrect")
+                            .setNegativeButton("Okay", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .show();
+                }else{
+                    startActivity(new Intent(LoginActivity.this, MapsActivity.class));
+            }
             }
         });
 
@@ -56,8 +78,8 @@ public class LoginActivity extends AppCompatActivity {
         String username = content.getText().toString();
         String password = content2.getText().toString();
         String type = "login";
-        BackgroundWork backgroundWorker = new BackgroundWork(this);
-        backgroundWorker.execute(type, username, password);
+        BackgroundWork backgroundWork = new BackgroundWork(this);
+        backgroundWork.execute(type, username, password);
     }
 }
 
