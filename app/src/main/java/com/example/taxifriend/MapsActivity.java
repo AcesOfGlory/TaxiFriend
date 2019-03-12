@@ -1,21 +1,17 @@
 package com.example.taxifriend;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -69,9 +65,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                content = findViewById(R.id.fromLocation);
+                strContent = content.getText().toString();
                 coord = new LatLng(location.getLatitude(),location.getLongitude());
                 System.out.println(coord);
-                fromMarker = mMap.addMarker(new MarkerOptions().position((coord)));
+
+                if (fromMarker == null) {
+                    fromMarker = mMap.addMarker(new MarkerOptions().position((coord)));
+                    fromMarker.setTitle(getString(R.string.Current_Location));
+                }else if(strContent.toLowerCase().equals(getString(R.string.Current))){
+                    fromMarker.setPosition(coord);
+                    fromMarker.setTitle(getString(R.string.Current_Location));
+                }
             }
 
             @Override
@@ -118,11 +123,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     intent.putExtra("fromLocation",strContent);
                     intent.putExtra("toLocation",strContent2);
                     startActivity(intent);
-
-
                 }
             }
-
         });
 
         content = findViewById(R.id.toLocation);
@@ -137,28 +139,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (keyEvent == null || !keyEvent.isShiftPressed()) {
                         content = findViewById(R.id.fromLocation);
                         strContent = content.getText().toString();
-                        if (!strContent.toLowerCase().equals("current")) {
+                        if (!strContent.toLowerCase().equals(getString(R.string.Current))) {
                             coord = getLocation(strContent);
                             LatLng fromLocationMarker = coord;
                             if (fromMarker == null) {
-                                fromMarker = mMap.addMarker(new MarkerOptions().position(fromLocationMarker).title("From Location"));
+                                fromMarker = mMap.addMarker(new MarkerOptions().position(fromLocationMarker).title(strContent));
                             } else {
                                 fromMarker.setPosition(fromLocationMarker);
                             }
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(fromLocationMarker));
-                            //CameraUpdateFactory.zoomTo(15);
+
                         }
                         content = findViewById(R.id.toLocation);
-                        content2 = findViewById(R.id.fromLocation);
                         strContent = content.getText().toString();
                         coord = getLocation(strContent);
                         LatLng toLocationMarker = coord;
                         if(toMarker == null) {
-                            toMarker = mMap.addMarker(new MarkerOptions().position(toLocationMarker).title("To Location"));
+                            toMarker = mMap.addMarker(new MarkerOptions().position(toLocationMarker).title(strContent));
                         }else{
                             toMarker.setPosition(toLocationMarker);
                         }
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(toLocationMarker));
+                        mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(toLocationMarker, 5.0f));
                         CameraUpdateFactory.zoomTo(15);
 
                         new FetchURL(MapsActivity.this).execute(getUrl(fromMarker.getPosition(), toMarker.getPosition(), "driving"), "driving");
@@ -171,9 +171,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return false;
             }
         });
-
-
-
     }
 
 
@@ -190,36 +187,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
 
-        //LatLng curr = new LatLng();
-        String address = "London";
-        String address2 = "Manchester";
-
-
-
-
-        /**
-        try {
-            addressList = coder.getFromLocationName(address,5);
-            addressList2 = coder.getFromLocationName(address2,5);
-            Address location = addressList.get(0);
-            Address location2 = addressList2.get(0);
-            coord = new LatLng(location.getLatitude(),location.getLongitude());
-            coord2 =  new LatLng(location2.getLatitude(),location2.getLongitude());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        MarkerOptions mOptions = new MarkerOptions();
-
-        LatLng manchester = coord2;
-        mMap.addMarker(new MarkerOptions().position(manchester).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(manchester));
-
-        LatLng london = coord;
-        mMap.addMarker(new MarkerOptions().position(london).title("Marker in London"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(london));
-
-         **/
+        mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(53.5127483,-2.2114427), 5.0f) );
     }
 
     @Override
@@ -270,7 +238,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void configureLocation(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+/*        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -279,8 +247,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         , 10);
                 return;
             }
-        }
-        if(fromMarker == null) {
+        }*/
+        if (fromMarker == null) {
             locationManager.requestLocationUpdates("gps", 100, 0, listener);
         }
     }

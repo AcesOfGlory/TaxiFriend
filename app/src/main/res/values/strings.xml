@@ -28,4 +28,7 @@
     <string name="Total_Payment">Total payment</string>
     <string name="Done">Done</string>
     <string name="Ok">Ok</string>
+
+    <string name="Current_Location">Current Location</string>
+    <string name="Current">current</string>
 </resources>
