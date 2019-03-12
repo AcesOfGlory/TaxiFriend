@@ -59,6 +59,7 @@
         android:layout_marginBottom="665dp"
         android:ems="10"
         android:inputType="text"
+        android:text="Current"
         android:textSize="18sp" />
 
     <EditText
