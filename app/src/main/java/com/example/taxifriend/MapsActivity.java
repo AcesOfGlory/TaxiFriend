@@ -1,14 +1,21 @@
 package com.example.taxifriend;
 
-import android.app.Activity;
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,8 +23,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,13 +46,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     MarkerOptions mOptions;
     Marker fromMarker = null,toMarker = null;
-    PopupWindow popupWindow;
-    Context context;
-    private RelativeLayout mRelativeLayout;
-    private Button mButton;
-
-    private PopupWindow mPopupWindow;
-    Activity activity;
+    LocationManager locationManager;
+    LocationListener listener;
     private Polyline currentPolyline;
     LatLng coord = null;
     List<Address> addressList;
@@ -63,6 +63,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        listener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                coord = new LatLng(location.getLatitude(),location.getLongitude());
+                System.out.println(coord);
+                fromMarker = mMap.addMarker(new MarkerOptions().position((coord)));
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(i);
+
+            }
+        };
+        configureLocation();
 
 
         Button btn = (Button) findViewById(R.id.buttonMap);
@@ -108,16 +137,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (keyEvent == null || !keyEvent.isShiftPressed()) {
                         content = findViewById(R.id.fromLocation);
                         strContent = content.getText().toString();
-                        coord = getLocation(strContent);
-                        LatLng fromLocationMarker = coord;
-                        if (fromMarker == null) {
-                            fromMarker = mMap.addMarker(new MarkerOptions().position(fromLocationMarker).title("From Location"));
-                        }else{
-                            fromMarker.setPosition(fromLocationMarker);
+                        if (!strContent.toLowerCase().equals("current")) {
+                            coord = getLocation(strContent);
+                            LatLng fromLocationMarker = coord;
+                            if (fromMarker == null) {
+                                fromMarker = mMap.addMarker(new MarkerOptions().position(fromLocationMarker).title("From Location"));
+                            } else {
+                                fromMarker.setPosition(fromLocationMarker);
+                            }
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(fromLocationMarker));
+                            //CameraUpdateFactory.zoomTo(15);
                         }
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(fromLocationMarker));
-                        //CameraUpdateFactory.zoomTo(15);
-
                         content = findViewById(R.id.toLocation);
                         content2 = findViewById(R.id.fromLocation);
                         strContent = content.getText().toString();
@@ -157,14 +187,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
 
         //LatLng curr = new LatLng();
         String address = "London";
         String address2 = "Manchester";
 
-        googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(53.5127483,-2.2114427), 5.0f) );
+
 
 
         /**
@@ -192,9 +222,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          **/
     }
 
-    public void onLocationChanged(Location location){
-        mOptions = new MarkerOptions();
-        mOptions.position(new LatLng(location.getLatitude(),location.getLongitude()));
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 10:
+                configureLocation();
+                break;
+            default:
+                break;
+        }
     }
 
     public LatLng getLocation(String string){
@@ -230,5 +267,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (currentPolyline != null)
             currentPolyline.remove();
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
+
+    public void configureLocation(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET}
+                        , 10);
+                return;
+            }
+        }
+        if(fromMarker == null) {
+            locationManager.requestLocationUpdates("gps", 100, 0, listener);
+        }
     }
 }
