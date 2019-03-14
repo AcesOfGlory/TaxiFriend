@@ -21,7 +21,7 @@ import java.util.Date;
 
 public class PaymentActivity extends AppCompatActivity {
 
-    String strContent,strContent2,strContent3,strContent4,strContent5,strContent6;
+    String strContent,strContent2,strContent3,strContent4,strContent5,strContent6,strContent7;
     EditText content,content2,content3,content4,content5;
     TextView textContent,textContent2,textContent3,textContent4;
     Spinner spinnerContent;
@@ -47,13 +47,16 @@ public class PaymentActivity extends AppCompatActivity {
                 strContent4 = content4.getText().toString();
                 strContent6 = spinnerContent.getSelectedItem().toString();
                 strContent5 = content5.getText().toString();
-                Intent intent = new Intent(PaymentActivity.this, OverviewActivity.class);
+                Intent intent = getIntent();
+                strContent7 = intent.getStringExtra("payment");
+                intent = new Intent(PaymentActivity.this, OverviewActivity.class);
                 intent.putExtra("fromPayment",strContent);
                 intent.putExtra("toPayment",strContent2);
                 intent.putExtra("bookingTimePayment",strContent3);
                 intent.putExtra("priorityPayment",strContent6);
                 intent.putExtra("promotionPayment",strContent5);
                 intent.putExtra("bookingDatePayment",strContent4);
+                intent.putExtra("payment",strContent7);
                 startActivity(intent);
             }
         });

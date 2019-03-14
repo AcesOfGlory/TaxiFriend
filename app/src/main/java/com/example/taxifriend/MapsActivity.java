@@ -1,17 +1,21 @@
 package com.example.taxifriend;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -31,8 +35,23 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import directionhelpers.FetchURL;
 import directionhelpers.TaskLoadedCallback;
@@ -45,10 +64,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationManager locationManager;
     LocationListener listener;
     private Polyline currentPolyline;
-    LatLng coord = null;
+    LatLng coord = null,coord2 = null;
     List<Address> addressList;
     EditText content,content2;
     String strContent,strContent2;
+    Double perMileValue = 0.5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,9 +139,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             })
                             .show();
                 }else{
+                    Location loc1 = new Location(""),loc2 = new Location("");
+                    content = findViewById(R.id.fromLocation);
+                    content2 = findViewById(R.id.toLocation);
+                    strContent = content.getText().toString();
+                    strContent2 = content2.getText().toString();
+                    coord = getLocation(strContent);
+                    LatLng fromLocationMarker = coord;
+                    loc1.setLatitude(fromLocationMarker.latitude);
+                    loc1.setLongitude(fromLocationMarker.longitude);
+                    coord2 = getLocation(strContent2);
+                    LatLng toLocationMarker = coord2;
+                    loc2.setLatitude(toLocationMarker.latitude);
+                    loc2.setLongitude(toLocationMarker.longitude);
+                    float distanceTo = loc1.distanceTo(loc2);
+                    double totalPaymentMiles = distanceTo / 1609.344;
+                    String totalPayment = String.format("%.2f",totalPaymentMiles * perMileValue * 3.25);
+                    System.out.println(coord);
+                    System.out.println(distanceTo);
                     Intent intent = new Intent(MapsActivity.this,PaymentActivity.class);
                     intent.putExtra("fromLocation",strContent);
                     intent.putExtra("toLocation",strContent2);
+                    intent.putExtra("payment",totalPayment);
                     startActivity(intent);
                 }
             }
@@ -238,7 +277,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void configureLocation(){
-/*        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -247,9 +286,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         , 10);
                 return;
             }
-        }*/
+        }
         if (fromMarker == null) {
             locationManager.requestLocationUpdates("gps", 100, 0, listener);
         }
+    }
+
+    public float getDistance(double lat1, double lon1, double lat2, double lon2) {
+        String result_in_kms = "";
+        String url = "http://maps.google.com/maps/api/directions/xml?origin=" + lat1 + "," + lon1 + "&destination=" + lat2 + "," + lon2 + "&sensor=false&units=metric";
+        String tag[] = {"text"};
+        HttpResponse response = null;
+        try {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpContext localContext = new BasicHttpContext();
+            HttpPost httpPost = new HttpPost(url);
+            response = httpClient.execute(httpPost, localContext);
+            InputStream is = response.getEntity().getContent();
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document doc = builder.parse(is);
+            if (doc != null) {
+                NodeList nl;
+                ArrayList args = new ArrayList();
+                for (String s : tag) {
+                    nl = doc.getElementsByTagName(s);
+                    if (nl.getLength() > 0) {
+                        Node node = nl.item(nl.getLength() - 1);
+                        args.add(node.getTextContent());
+                    } else {
+                        args.add(" - ");
+                    }
+                }
+                result_in_kms =String.valueOf( args.get(0));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Float f=Float.valueOf(result_in_kms);
+        return f*1000;
     }
 }
